@@ -1,7 +1,6 @@
 // 2020 Sticky Snout Studio (Jonas Molgaard)
 
 #include "AnimNode_UBIKSolver.h"
-#include "UBIKRuntime.h"
 #include "AnimationRuntime.h"
 #include "Animation/AnimInstanceProxy.h"
 
