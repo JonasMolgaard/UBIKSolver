@@ -11,6 +11,7 @@ which was implemented in Unity and shared here: https://github.com/dabeschte/VRA
 * Support for IK chain going from Pelvis and up
 * Easy to use Plugin
 * Bonus utility functions (RotatePointAroundPivot, SafeguardAngle, CosineRule, FindBetweenNormals)
+* Compatible with UE4.24+
 
 ### Requirements ###
 * SkeletalMesh must be rigged with the default UE4 mannequin skeleton.
