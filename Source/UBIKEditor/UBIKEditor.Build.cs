@@ -23,7 +23,7 @@ public class UBIKEditor : ModuleRules
 
         PublicDependencyModuleNames.AddRange(new string[] { "UBIKRuntime", "Core", "CoreUObject", "Engine", "InputCore"});
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "EditorStyle", "AnimGraph", "BlueprintGraph", "PropertyEditor", "Slate", "SlateCore" });
+        PrivateDependencyModuleNames.AddRange(new string[] { "UnrealEd", "EditorStyle", "AnimGraph", "AnimGraphRuntime", "BlueprintGraph", "PropertyEditor", "Slate", "SlateCore" });
 		
 		DynamicallyLoadedModuleNames.AddRange(
 			new string[]
