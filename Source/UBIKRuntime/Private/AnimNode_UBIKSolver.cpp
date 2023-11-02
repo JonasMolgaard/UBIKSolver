@@ -451,7 +451,7 @@ FTransform FAnimNode_UBIKSolver::RotateUpperArm(bool IsLeftArm, const FVector& H
 */
 void FAnimNode_UBIKSolver::ResetUpperArmsLocation()
 {
-    if (SkeletalMeshComponent && SkeletalMeshComponent->SkeletalMesh)
+    if (SkeletalMeshComponent && SkeletalMeshComponent->GetSkinnedAsset())
     {
         const FVector& LeftUpperArm = SkeletalMeshComponent->GetSocketTransform(LeftUpperArmBoneToModify.BoneName, RTS_World).GetTranslation();
         LeftUpperArmTransformS = FTransform(UKismetMathLibrary::InverseTransformLocation(ShoulderTransformWorld, LeftUpperArm));
