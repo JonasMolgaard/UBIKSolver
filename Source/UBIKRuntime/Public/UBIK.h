@@ -81,10 +81,10 @@ public:
 
     /** This should be set via call to GetUBIKSettings, typically from "Event Blueprint Begin Play" **/
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
-    FVector LocalHandOffset;
+    FVector LocalHandOffset = FVector::ZeroVector;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
-    FRotator LocalHandRotationOffset;
+    FRotator LocalHandRotationOffset = FRotator::ZeroRotator;
     
     /** This should be set via call to GetUBIKSettings, typically from "Event Blueprint Begin Play" **/
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Settings)
