@@ -2,6 +2,7 @@
 
 #include "AnimNode_UBIKSolver.h"
 #include "AnimationRuntime.h"
+#include "Misc/EngineVersionComparison.h"
 #include "Animation/AnimInstanceProxy.h"
 
 /** STATS FOR USE WITH PROFILER **/
@@ -451,7 +452,11 @@ FTransform FAnimNode_UBIKSolver::RotateUpperArm(bool IsLeftArm, const FVector& H
 */
 void FAnimNode_UBIKSolver::ResetUpperArmsLocation()
 {
+#if UE_VERSION_OLDER_THAN(5, 3, 0)
+    if (SkeletalMeshComponent && SkeletalMeshComponent->SkeletalMesh)
+#else
     if (SkeletalMeshComponent && SkeletalMeshComponent->GetSkinnedAsset())
+#endif
     {
         const FVector& LeftUpperArm = SkeletalMeshComponent->GetSocketTransform(LeftUpperArmBoneToModify.BoneName, RTS_World).GetTranslation();
         LeftUpperArmTransformS = FTransform(UKismetMathLibrary::InverseTransformLocation(ShoulderTransformWorld, LeftUpperArm));
