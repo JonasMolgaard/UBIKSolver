@@ -2,6 +2,8 @@
 
 #include "UBIK.h"
 
+#include "UBIKRuntime.h"
+
 FUBIKSettings UUBIK::Initialize(FUBIKDefaults Defaults, FUBIKCalibrationData Calibration)
 {
 	const float LowerArmRatio = 0.48f;

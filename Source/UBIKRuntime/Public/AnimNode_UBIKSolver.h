@@ -121,6 +121,8 @@ public:
     // End of FAnimNode_SkeletalControlBase interface
 
 private:
+    /** If true, this will adjust the offset of the Oculus controllers. This is done automatically if you are using the OpenXR SDK. **/
+    bool bAdjustOculusOffset = false;
 
     TArray<FBoneReference> AllBones;
 
