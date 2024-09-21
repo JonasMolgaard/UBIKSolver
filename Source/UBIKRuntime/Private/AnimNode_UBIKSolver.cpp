@@ -2,8 +2,11 @@
 
 #include "AnimNode_UBIKSolver.h"
 #include "AnimationRuntime.h"
-#include "Misc/EngineVersionComparison.h"
+#include "HeadMountedDisplayFunctionLibrary.h"
+#include "UBIKRuntime.h"
 #include "Animation/AnimInstanceProxy.h"
+#include "Interfaces/IPluginManager.h"
+#include "Misc/EngineVersionComparison.h"
 
 /** STATS FOR USE WITH PROFILER **/
 DECLARE_CYCLE_STAT(TEXT("UBIK_EvaluateThread"), STAT_UBIK_EvaluateThread, STATGROUP_Character);
@@ -30,6 +33,19 @@ void FAnimNode_UBIKSolver::Initialize_AnyThread(const FAnimationInitializeContex
 {
     Super::Initialize_AnyThread(Context);
 
+    const TSharedPtr<IPlugin> OculusXRPlugin = IPluginManager::Get().FindPlugin("OculusXR");
+    const FName HMDName = UHeadMountedDisplayFunctionLibrary::GetHMDDeviceName();
+    const bool pluginEnabled = OculusXRPlugin.IsValid() && OculusXRPlugin->IsEnabled();
+    UE_LOG(LogUBIKRuntime, Display, TEXT("HMDName: %s, MetaXR: %d, Enabled: %d"), *HMDName.ToString(), OculusXRPlugin.IsValid(), pluginEnabled);
+
+    if (!OculusXRPlugin.IsValid()
+        || (!OculusXRPlugin->IsEnabled() && (HMDName.ToString().Contains("Quest")
+                                             || HMDName.ToString().Contains("Android")
+                                             || HMDName.ToString().Contains("Rift"))))
+    {
+		bAdjustOculusOffset = true;
+    }
+    
     Context.AnimInstanceProxy->GetSkelMeshComponent()->SetTickGroup(TG_DuringPhysics);
 }
 
@@ -91,6 +107,16 @@ void FAnimNode_UBIKSolver::EvaluateSkeletalControl_AnyThread(FComponentSpacePose
     LowerArmRRotation = FRotator(RightLowerArmTransformComponentSpace.Rotator().Quaternion() * FRotator(0.f, 180.f, 180.f).Quaternion());
     HandRRotation = FRotator(RightHandTransformComponentSpace.Rotator().Quaternion() * FRotator(180.f, 25.f, 180.f).Quaternion());
 
+    if (bAdjustOculusOffset)
+    {
+        HandLRotation = FRotator(LeftHandTransformComponentSpace.Rotator().Quaternion() * FRotator(-90.f, -25.f, 180.f).Quaternion());
+        HandRRotation = FRotator(RightHandTransformComponentSpace.Rotator().Quaternion() * FRotator(90.f, 25.f, 180.f).Quaternion());
+    } else
+    {
+        HandLRotation = FRotator(LeftHandTransformComponentSpace.Rotator().Quaternion() * FRotator(0.f, -25.f, 180.f).Quaternion());
+        HandRRotation = FRotator(RightHandTransformComponentSpace.Rotator().Quaternion() * FRotator(180.f, 25.f, 180.f).Quaternion());
+    }
+    
     const FBoneContainer& BoneContainer = Output.Pose.GetPose().GetBoneContainer();
 
     TArray<FBoneTransform> SortedBoneTransform;
@@ -138,7 +164,9 @@ void FAnimNode_UBIKSolver::EvaluateSkeletalControl_AnyThread(FComponentSpacePose
 
 void FAnimNode_UBIKSolver::SetBoneTransform(TArray<FBoneTransform>& OutBoneTransforms, const FBoneReference& BoneToModify,
                                             const FTransform& InTransform, FComponentSpacePoseContext& Output,
-                                            const FBoneContainer& BoneContainer, bool bApplyRotation, bool bApplyTranslation)
+                                            const FBoneContainer& BoneContainer,
+                                            const bool bApplyRotation,
+                                            const bool bApplyTranslation)
 {
     const FCompactPoseBoneIndex& CompactBoneIndex = BoneToModify.GetCompactPoseIndex(BoneContainer);
 
